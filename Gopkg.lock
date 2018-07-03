@@ -7,9 +7,49 @@
   packages = ["."]
   revision = "3af4cd4741ca4f3eb0c407c034571a6fb0ea529c"
 
+[[projects]]
+  branch = "master"
+  name = "github.com/yuin/charsetutil"
+  packages = ["."]
+  revision = "891287c5932b9c72024317f9b96c67fb11528443"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = [
+    "html",
+    "html/atom",
+    "html/charset"
+  ]
+  revision = "ed29d75add3d7c4bf7ca65aac0c6df3d1420216f"
+
+[[projects]]
+  name = "golang.org/x/text"
+  packages = [
+    "encoding",
+    "encoding/charmap",
+    "encoding/htmlindex",
+    "encoding/internal",
+    "encoding/internal/identifier",
+    "encoding/japanese",
+    "encoding/korean",
+    "encoding/simplifiedchinese",
+    "encoding/traditionalchinese",
+    "encoding/unicode",
+    "internal/gen",
+    "internal/tag",
+    "internal/utf8internal",
+    "language",
+    "runes",
+    "transform",
+    "unicode/cldr"
+  ]
+  revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
+  version = "v0.3.0"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "870cb326f74eb6e54bfe0d693242876441a81e88a5a40df8256bf34c4bd0bb1f"
+  inputs-digest = "09fddb4450b8d123759cd88d0957c869758be454dbaec0240beaa9c043553543"
   solver-name = "gps-cdcl"
   solver-version = 1

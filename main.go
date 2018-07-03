@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strings"
 
 	"github.com/saintfish/chardet"
+	"github.com/yuin/charsetutil"
 )
 
 func main() {
@@ -16,7 +18,19 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf(detectCharEncode(content))
+
+	encoding := detectCharEncode(content)
+	fmt.Printf(encoding + "\n")
+
+	b, err := charsetutil.DecodeBytes(content, encoding)
+	str := string(b)
+	fmt.Printf(str)
+
+	if strings.Contains(str, "\r\n") {
+		fmt.Printf("EOL: CRLF\n")
+	} else {
+		fmt.Printf("EOL: LF\n")
+	}
 }
 
 func detectCharEncode(body []byte) string {

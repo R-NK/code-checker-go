@@ -29,6 +29,10 @@
   branch = "master"
   name = "github.com/saintfish/chardet"
 
+[[constraint]]
+  branch = "master"
+  name = "github.com/yuin/charsetutil"
+
 [prune]
   go-tests = true
   unused-packages = true
