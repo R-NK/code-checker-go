@@ -1,10 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
-	"os"
+	"io/ioutil"
+	"log"
 
 	"github.com/saintfish/chardet"
 )
@@ -12,24 +12,11 @@ import (
 func main() {
 	flag.Parse()
 
-	content, err = ioutill.ReadFile(flag.Arg(0))
-
-	var fp *os.File
-	var err error
-
-	fp, err = os.Open(flag.Arg(0))
+	content, err := ioutil.ReadFile(flag.Arg(0))
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	defer fp.Close()
-
-	scanner := bufio.NewScanner(fp)
-	for scanner.Scan() {
-		fmt.Println(scanner.Text())
-	}
-	if err := scanner.Err(); err != nil {
-		panic(err)
-	}
+	fmt.Printf(detectCharEncode(content))
 }
 
 func detectCharEncode(body []byte) string {
