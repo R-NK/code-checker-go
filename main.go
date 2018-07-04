@@ -21,7 +21,7 @@ func main() {
 	// 	log.Fatal(err)
 	// }
 
-	files := listFiles("C:/Users/right/Source/Repos/HelloOpenGL/HelloOpenGL", []string{"cpp", "h"})
+	files := listFiles("test", []string{"cpp", "h"})
 
 	for _, file := range files {
 		content, err := ioutil.ReadFile(file)
@@ -36,9 +36,9 @@ func main() {
 		str := string(b)
 
 		if strings.Contains(str, "\r\n") {
-			fmt.Printf("EOL: CRLF\n")
+			fmt.Println("EOL: CRLF")
 		} else {
-			fmt.Printf("EOL: LF\n")
+			fmt.Println("EOL: LF")
 		}
 		fmt.Println()
 	}
@@ -72,7 +72,7 @@ func listFiles(dir string, exts []string) []string {
 		}
 		return nil
 	})
-
+	fmt.Println()
 	if err != nil {
 		fmt.Printf("error walking the path %q: %v\n", dir, err)
 	}
