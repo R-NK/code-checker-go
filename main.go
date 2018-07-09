@@ -1,51 +1,73 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
+	"github.com/jessevdk/go-flags"
 	"github.com/saintfish/chardet"
 	"github.com/yuin/charsetutil"
 )
 
-var (
-	status = *flag.Bool("status", false, "show files encoding and EOL")
-	target = *flag.String("t", ".", "target dir")
-)
+type opts struct {
+	Status     bool     `short:"s" long:"status" description:"show files encoding and EOL"`
+	Replace    string   `short:"r" long:"replace" description:"replace EOL with a specified argument. e.g. r=CRLF, r=LF" optional:"true" default:"disable"`
+	TargetDir  string   `short:"t" long:"target" description:"target dir" default:"."`
+	TargetExts []string `short:"e" long:"exts" description:"target file extensions"`
+}
 
 func main() {
-	flag.Parse()
+	var options opts
+	_, err := flags.Parse(&options)
+	if err != nil {
+		fmt.Println("なんかおきたぞ")
+	}
 
-	// exts, err := ioutil.ReadFile(flag.Arg(0))
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	files := listFilesByExts(target, []string{"cpp", "h"})
+	files := listFilesByExts(options.TargetDir, options.TargetExts)
+	if len(files) == 0 {
+		fmt.Println("file not found.")
+	}
 
 	for _, file := range files {
 		content, err := ioutil.ReadFile(file)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalln(err)
 		}
-		fmt.Println(file)
 		encoding := detectCharEncode(content)
-		fmt.Println(encoding)
 
 		b, err := charsetutil.DecodeBytes(content, encoding)
 		str := string(b)
 
-		if strings.Contains(str, "\r\n") {
-			fmt.Println("EOL: CRLF")
-		} else {
-			fmt.Println("EOL: LF")
+		if options.Status {
+			fmt.Println(file)
+			fmt.Println(encoding)
+			if strings.Contains(str, "\r\n") {
+				fmt.Println("EOL: CRLF")
+			} else {
+				fmt.Println("EOL: LF")
+			}
+			fmt.Println()
 		}
-		fmt.Println()
+
+		if options.Replace != "disable" {
+			var eol string
+			if options.Replace == "CRLF" {
+				eol = "\r\n"
+			} else if options.Replace == "LF" {
+				eol = "\n"
+			} else {
+				log.Fatalln("ivalid argument")
+			}
+			rep := regexp.MustCompile(`\r\n|\r|\n`)
+			replaced := rep.ReplaceAllString(str, eol)
+			ioutil.WriteFile("output/"+filepath.Base(file)+"_new", []byte(replaced), os.ModePerm)
+			fmt.Println(file + "\n" + "replaced eol to " + options.Replace + "\n")
+		}
 	}
 }
 
@@ -82,8 +104,4 @@ func listFilesByExts(dir string, exts []string) []string {
 		fmt.Printf("error walking the path %q: %v\n", dir, err)
 	}
 	return paths
-}
-
-func replaceNewline(str string, newline string, oldline string) string {
-	return strings.NewReplacer(oldline, newline).Replace(str)
 }
