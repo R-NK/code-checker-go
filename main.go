@@ -13,6 +13,11 @@ import (
 	"github.com/yuin/charsetutil"
 )
 
+var (
+	status = *flag.Bool("status", false, "show files encoding and EOL")
+	target = *flag.String("t", ".", "target dir")
+)
+
 func main() {
 	flag.Parse()
 
@@ -21,14 +26,14 @@ func main() {
 	// 	log.Fatal(err)
 	// }
 
-	files := listFiles("test", []string{"cpp", "h"})
+	files := listFilesByExts(target, []string{"cpp", "h"})
 
 	for _, file := range files {
 		content, err := ioutil.ReadFile(file)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(filepath.Base(file))
+		fmt.Println(file)
 		encoding := detectCharEncode(content)
 		fmt.Println(encoding)
 
@@ -53,7 +58,7 @@ func detectCharEncode(body []byte) string {
 	return result.Charset
 }
 
-func listFiles(dir string, exts []string) []string {
+func listFilesByExts(dir string, exts []string) []string {
 	paths := []string{}
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -66,7 +71,7 @@ func listFiles(dir string, exts []string) []string {
 				ext = "." + ext
 			}
 			if ext == filepath.Ext(path) {
-				fmt.Println(path)
+				// fmt.Println(path)
 				paths = append(paths, path)
 			}
 		}

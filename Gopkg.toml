@@ -33,6 +33,10 @@
   branch = "master"
   name = "github.com/yuin/charsetutil"
 
+[[constraint]]
+  branch = "master"
+  name = "github.com/jessevdk/go-flags"
+
 [prune]
   go-tests = true
   unused-packages = true
