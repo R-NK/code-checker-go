@@ -24,20 +24,17 @@ type opts struct {
 func main() {
 	var options opts
 	parser := flags.NewParser(&options, flags.Default)
-	args, err := parser.Parse()
+	_, err := parser.Parse()
 
 	// コマンドライン引数が与えられない場合helpを表示
-	if len(args) == 0 {
+	if options.Status || options.Replace != "" {
+		run(options)
+	} else {
 		if err == nil {
 			parser.WriteHelp(os.Stdout)
 			os.Exit(1)
 		}
 	}
-
-	if options.Status || options.Replace != "" {
-		run(options)
-	}
-
 }
 
 func run(options opts) {
