@@ -9,7 +9,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/jessevdk/go-flags"
+	flags "github.com/jessevdk/go-flags"
 	"github.com/saintfish/chardet"
 	"github.com/yuin/charsetutil"
 )
@@ -18,14 +18,14 @@ type opts struct {
 	Status     bool     `short:"s" long:"status" description:"show files encoding and EOL"`
 	Replace    string   `short:"r" long:"replace" description:"replace EOL with a specified argument. e.g. r=CRLF, r=LF" optional:"true" default:"disable"`
 	TargetDir  string   `short:"t" long:"target" description:"target dir" default:"."`
-	TargetExts []string `short:"e" long:"exts" description:"target file extensions"`
+	TargetExts []string `short:"e" long:"exts" description:"target file extensions" default:"*"`
 }
 
 func main() {
 	var options opts
 	_, err := flags.Parse(&options)
 	if err != nil {
-		fmt.Println("なんかおきたぞ")
+		log.Fatalln(err)
 	}
 
 	files := listFilesByExts(options.TargetDir, options.TargetExts)
@@ -88,12 +88,17 @@ func listFilesByExts(dir string, exts []string) []string {
 			return err
 		}
 		for _, ext := range exts {
+			// ディレクトリの場合なにもしない
+			fi, _ := os.Stat(path)
+			if fi.IsDir() {
+				continue
+			}
 			// 拡張子が.から始まらない場合先頭に付与
 			if !strings.Contains(ext, ".") {
 				ext = "." + ext
 			}
-			if ext == filepath.Ext(path) {
-				// fmt.Println(path)
+			// ワイルドカードの場合そのまま追加
+			if ext == filepath.Ext(path) || ext == ".*" {
 				paths = append(paths, path)
 			}
 		}
