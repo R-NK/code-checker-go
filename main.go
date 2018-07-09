@@ -9,7 +9,7 @@ import (
 	"regexp"
 	"strings"
 
-	flags "github.com/jessevdk/go-flags"
+	"github.com/jessevdk/go-flags"
 	"github.com/saintfish/chardet"
 	"github.com/yuin/charsetutil"
 )
@@ -23,11 +23,24 @@ type opts struct {
 
 func main() {
 	var options opts
-	_, err := flags.Parse(&options)
-	if err != nil {
-		log.Fatalln(err)
+	parser := flags.NewParser(&options, flags.Default)
+	args, err := parser.Parse()
+
+	// コマンドライン引数が与えられない場合helpを表示
+	if len(args) == 0 {
+		if err == nil {
+			parser.WriteHelp(os.Stdout)
+			os.Exit(1)
+		}
 	}
 
+	if options.Status || options.Replace != "" {
+		run(options)
+	}
+
+}
+
+func run(options opts) {
 	files := listFilesByExts(options.TargetDir, options.TargetExts)
 	if len(files) == 0 {
 		fmt.Println("file not found.")
