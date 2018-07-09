@@ -16,7 +16,7 @@ import (
 
 type opts struct {
 	Status     bool     `short:"s" long:"status" description:"show files encoding and EOL"`
-	Replace    string   `short:"r" long:"replace" description:"replace EOL with a specified argument. e.g. r=CRLF, r=LF" optional:"true" default:"disable"`
+	Replace    string   `short:"r" long:"replace" description:"replace EOL with a specified argument. e.g. r=CRLF, r=LF" optional:"true"`
 	TargetDir  string   `short:"t" long:"target" description:"target dir" default:"."`
 	TargetExts []string `short:"e" long:"exts" description:"target file extensions" default:"*"`
 }
@@ -64,7 +64,7 @@ func run(options opts) {
 			fmt.Println()
 		}
 
-		if options.Replace != "disable" {
+		if options.Replace != "" {
 			var eol string
 			if options.Replace == "CRLF" {
 				eol = "\r\n"
