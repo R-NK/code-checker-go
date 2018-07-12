@@ -6,12 +6,12 @@
         {
             "label": "build and run",
             "type": "shell",
-            "command": "go buld; ./code-checker-go.exe",
+            "command": "go build; ./code-checker-go.exe",
         },
         {
             "label": "build and run with -s -e cpp -e h",
             "type": "shell",
-            "command": "go buld; ./code-checker-go.exe -s -e cpp -e h",
+            "command": "go build; ./code-checker-go.exe -s -e cpp -e h",
             "group": {
                 "kind": "build",
                 "isDefault": true
