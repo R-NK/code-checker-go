@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/jessevdk/go-flags"
-	"github.com/saintfish/chardet"
 	"github.com/yuin/charsetutil"
 )
 
@@ -54,7 +53,9 @@ func run(options opts) {
 		str := string(b)
 
 		if options.Status {
+			// relative file path
 			fmt.Println(file)
+			// file EOL
 			fmt.Println(encoding)
 			if strings.Contains(str, "\r\n") {
 				fmt.Println("EOL: CRLF")
@@ -65,58 +66,18 @@ func run(options opts) {
 		}
 
 		if options.Replace != "" {
-			var eol string
+			var newEol string
 			if options.Replace == "CRLF" {
-				eol = "\r\n"
+				newEol = "\r\n"
 			} else if options.Replace == "LF" {
-				eol = "\n"
+				newEol = "\n"
 			} else {
 				log.Fatalln("ivalid argument")
 			}
 			rep := regexp.MustCompile(`\r\n|\r|\n`)
-			replaced := rep.ReplaceAllString(str, eol)
+			replaced := rep.ReplaceAllString(str, newEol)
 			ioutil.WriteFile("output/"+filepath.Base(file)+"_new", []byte(replaced), os.ModePerm)
 			fmt.Println(file + "\n" + "replaced eol to " + options.Replace + "\n")
 		}
 	}
-}
-
-func detectCharEncode(body []byte) string {
-	det := chardet.NewTextDetector()
-	result, err := det.DetectBest(body)
-	if err != nil {
-		return "Unknown"
-	}
-	return result.Charset
-}
-
-func listFilesByExts(dir string, exts []string) []string {
-	paths := []string{}
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			fmt.Printf("prevent panic by handling failure accessing a path %q: %v\n", dir, err)
-			return err
-		}
-		for _, ext := range exts {
-			// ディレクトリの場合なにもしない
-			fi, _ := os.Stat(path)
-			if fi.IsDir() {
-				continue
-			}
-			// 拡張子が.から始まらない場合先頭に付与
-			if !strings.Contains(ext, ".") {
-				ext = "." + ext
-			}
-			// ワイルドカードの場合そのまま追加
-			if ext == filepath.Ext(path) || ext == ".*" {
-				paths = append(paths, path)
-			}
-		}
-		return nil
-	})
-	fmt.Println()
-	if err != nil {
-		fmt.Printf("error walking the path %q: %v\n", dir, err)
-	}
-	return paths
 }

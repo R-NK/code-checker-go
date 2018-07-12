@@ -1,0 +1,21 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build and run",
+            "type": "shell",
+            "command": "go buld; ./code-checker-go.exe",
+        },
+        {
+            "label": "build and run with -s -e cpp -e h",
+            "type": "shell",
+            "command": "go buld; ./code-checker-go.exe -s -e cpp -e h",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
