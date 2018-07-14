@@ -20,6 +20,8 @@ type opts struct {
 	TargetExts []string `short:"e" long:"exts" description:"target file extensions" default:"*"`
 }
 
+const unknown = "Unknown"
+
 func main() {
 	var options opts
 	parser := flags.NewParser(&options, flags.Default)
@@ -76,7 +78,12 @@ func run(options opts) {
 			}
 			rep := regexp.MustCompile(`\r\n|\r|\n`)
 			replaced := rep.ReplaceAllString(str, newEol)
-			ioutil.WriteFile("output/"+filepath.Base(file)+"_new", []byte(replaced), os.ModePerm)
+			// convert from utf8 to original encode
+			converted, err := charsetutil.Encode(replaced, encoding)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			ioutil.WriteFile("output/"+filepath.Base(file)+"_new", []byte(converted), os.ModePerm)
 			fmt.Println(file + "\n" + "replaced eol to " + options.Replace + "\n")
 		}
 	}
