@@ -1,7 +1,0 @@
-﻿  HelloOpenGL.cpp
-d:\right\documents\visual studio 2017\projects\helloopengl\helloopengl\helloopengl.cpp(316): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
-d:\right\documents\visual studio 2017\projects\helloopengl\helloopengl\helloopengl.cpp(317): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
-d:\right\documents\visual studio 2017\projects\helloopengl\helloopengl\helloopengl.cpp(323): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
-d:\right\documents\visual studio 2017\projects\helloopengl\helloopengl\helloopengl.cpp(324): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
-d:\right\documents\visual studio 2017\projects\helloopengl\helloopengl\helloopengl.cpp(347): warning C4244: '-=': 'double' から 'float' への変換です。データが失われる可能性があります。
-  HelloOpenGL.vcxproj -> D:\right\Documents\Visual Studio 2017\Projects\HelloOpenGL\x64\Debug\HelloOpenGL.exe
