@@ -15,10 +15,10 @@ import (
 
 type opts struct {
 	Status     bool     `short:"s" long:"status" description:"show files encoding and EOL"`
-	Replace    string   `short:"r" long:"replace" description:"replace EOL with a specified argument. e.g. r=CRLF, r=LF" optional:"true"`
-	TargetDir  string   `short:"t" long:"target" description:"target dir" default:"."`
-	TargetExts []string `short:"e" long:"exts" description:"target file extensions" default:"*"`
-	OutputDir  string   `short:"o" long:"out" description:"output dir" default:"$OVERRIDE"`
+	Replace    string   `short:"r" long:"replace" description:"replace EOL with a specified argument. e.g. r=CRLF, r=LF"`
+	TargetDir  string   `short:"t" long:"target" description:"target dir" default:"." default-mask:"current dir"`
+	TargetExts []string `short:"e" long:"exts" description:"target file extensions" default:"*" default-mask:"all"`
+	OutputDir  string   `short:"o" long:"out" description:"output dir" default:"$OVERRIDE" default-mask:"override"`
 }
 
 // UNKNOWN represents file encoding cannot be detected
