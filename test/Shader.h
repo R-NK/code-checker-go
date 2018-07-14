@@ -10,7 +10,7 @@ public:
 	unsigned int ID;
 
 	Shader(const GLchar* vertexPath, const GLchar* fragmentPath);
-	// シェーダを有効化
+	// シェ&#65533;[ダを有効化
 	void use() const;
 	// utility uniform functions
 	void setAttributeValue(const std::string &name, bool value) const;
