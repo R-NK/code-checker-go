@@ -19,13 +19,15 @@ type opts struct {
 	TargetDir  string   `short:"t" long:"target" description:"target dir" default:"." default-mask:"current dir"`
 	TargetExts []string `short:"e" long:"exts" description:"target file extensions" default:"*" default-mask:"all"`
 	OutputDir  string   `short:"o" long:"out" description:"output dir" default:"$OVERRIDE" default-mask:"override"`
+	ConvertEnc string   `short:"c" long:"convert" description:"convert encoding with a specified argument. e.g. c=utf8\n [utf8, utf-16, shift-jis, ...] *See Encoding spec on WHATWG" default:"false" default-mask:"original"`
 }
 
-// UNKNOWN represents file encoding cannot be detected
-const UNKNOWN = "Unknown"
-
-// OVERRIDE represents default OutputDIr parameter
-const OVERRIDE = "$OVERRIDE"
+const (
+	// UNKNOWN represents file encoding cannot be detected
+	UNKNOWN = "Unknown"
+	// OVERRIDE represents default OutputDIr parameter
+	OVERRIDE = "$OVERRIDE"
+)
 
 func main() {
 	var options opts
@@ -80,6 +82,13 @@ func run(options opts) {
 			fmt.Println()
 		}
 
+		var outPath string
+		if options.OutputDir == OVERRIDE {
+			outPath = file
+		} else {
+			outPath = options.OutputDir + "/" + filepath.Base(file)
+		}
+
 		if options.Replace != "" {
 			var newEol string
 			if options.Replace == "CRLF" {
@@ -90,20 +99,40 @@ func run(options opts) {
 				log.Fatalln("ivalid argument")
 			}
 			rep := regexp.MustCompile(`\r\n|\r|\n`)
-			replaced := rep.ReplaceAllString(str, newEol)
-			// convert UTF-8 to original encoding
-			converted := charsetutil.MustEncode(replaced, encoding)
+			str = rep.ReplaceAllString(str, newEol)
 
-			var outPath string
-			if options.OutputDir == OVERRIDE {
-				outPath = file
-			} else {
-				outPath = options.OutputDir + "/" + filepath.Base(file)
+			if options.ConvertEnc == "false" {
+				// convert UTF-8 to original encoding
+				converted := charsetutil.MustEncode(str, encoding)
+				ioutil.WriteFile(outPath, converted, os.ModePerm)
 			}
-
-			ioutil.WriteFile(outPath, []byte(converted), os.ModePerm)
 			fmt.Println(file + "\n" + "replaced eol to " + options.Replace + "\n")
 		}
 
+		if options.ConvertEnc != "false" {
+			converted, err := charsetutil.Encode(str, options.ConvertEnc)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			// add bom
+			converted = addBom(options, converted)
+
+			ioutil.WriteFile(outPath, converted, os.ModePerm)
+			fmt.Println(file + "\n" + "converted encoding to " + options.ConvertEnc + "\n")
+		}
 	}
+}
+
+func addBom(options opts, data []byte) []byte {
+	var converted []byte
+
+	if strings.EqualFold(options.ConvertEnc, "utf-16") || strings.EqualFold(options.ConvertEnc, "utf-16le") {
+		bom := []byte{0xFF, 0xFE}
+		converted = append(data[:0], append(bom, data[0:]...)...)
+	} else if strings.EqualFold(options.ConvertEnc, "utf-16be") {
+		bom := []byte{0xFE, 0xFF}
+		converted = append(data[:0], append(bom, data[0:]...)...)
+	}
+
+	return converted
 }
