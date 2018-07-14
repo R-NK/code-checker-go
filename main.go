@@ -21,7 +21,8 @@ type opts struct {
 	OutputDir  string   `short:"o" long:"out" description:"output dir" default:"$OVERRIDE"`
 }
 
-const unknown = "Unknown"
+// UNKNOWN represents file encoding cannot be detected
+const UNKNOWN = "Unknown"
 
 // OVERRIDE represents default OutputDIr parameter
 const OVERRIDE = "$OVERRIDE"
