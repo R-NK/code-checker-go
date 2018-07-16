@@ -114,8 +114,10 @@ func run(options opts) {
 			if err != nil {
 				log.Fatalln(err)
 			}
-			// add bom
-			converted = addBom(options, converted)
+			// add bom if not utf-16 before converting
+			if !strings.Contains(encoding, "UTF-16") {
+				converted = addBom(options, converted)
+			}
 
 			ioutil.WriteFile(outPath, converted, os.ModePerm)
 			fmt.Println(file + "\n" + "converted encoding to " + options.ConvertEnc + "\n")
